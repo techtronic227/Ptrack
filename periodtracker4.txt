@@ -1,0 +1,50 @@
+import datetime  # This imports the datetime module to work with dates.
+
+# Step 1: Period Tracker (Last Period & Next Period Prediction)
+def period_tracker():
+    last_period_date = input("Enter the start date of your last period (YYYY-MM-DD): ")
+    last_date = datetime.datetime.strptime(last_period_date, "%Y-%m-%d")
+    next_period_date = last_date + datetime.timedelta(days=28)
+    print(f"Your next period is expected on: {next_period_date.strftime('%Y-%m-%d')}")
+
+# Step 2: Mood Tracking
+def get_mood():
+    # Ask the user how they're feeling today and store the mood in lowercase
+    mood = input("How are you feeling today? (happy, sad, stressed, tired, excited): ").lower()
+    return mood
+
+def recommend_song(mood):
+    songs = {
+        "happy": "Happy by Pharrell Williams",
+        "sad": "Someone Like You by Adele",
+        "stressed": "Weightless by Marconi Union",
+        "tired": "The Lazy Song by Bruno Mars",
+        "excited": "Can't Stop the Feeling by Justin Timberlake"
+    }
+    return songs.get(mood, "No recommendation available for this mood.")
+
+def recommend_food(mood):
+    foods = {
+        "happy": "Pizza 🍕",
+        "sad": "Chocolate 🍫",
+        "stressed": "Green Tea 🍵",
+        "tired": "Smoothie 🥤",
+        "excited": "Ice Cream 🍦"
+    }
+    return foods.get(mood, "No food recommendation available for this mood.")
+
+# Step 3: Combine Period Tracker and Mood Features
+def main():
+    # Period tracker feature
+    period_tracker()
+
+    # Mood tracking feature
+    mood = get_mood()
+    song = recommend_song(mood)
+    food = recommend_food(mood)
+
+    print(f"Recommended song: {song}")
+    print(f"Recommended food: {food}")
+
+# Run the app
+main()

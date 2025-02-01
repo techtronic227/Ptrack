@@ -1,0 +1,149 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
+
+void main() {
+  runApp(PeriodTrackerApp());
+}
+
+class PeriodTrackerApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Period Tracker',
+      theme: ThemeData(primarySwatch: Colors.pink),
+      home: PeriodTrackerHome(),
+    );
+  }
+}
+
+class PeriodTrackerHome extends StatefulWidget {
+  @override
+  _PeriodTrackerHomeState createState() => _PeriodTrackerHomeState();
+}
+
+class _PeriodTrackerHomeState extends State<PeriodTrackerHome> {
+  DateTime? lastPeriodDate;
+  DateTime? nextPeriodDate;
+  String selectedMood = 'Happy';
+  String songRecommendation = '';
+  String foodRecommendation = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPeriodData();
+  }
+
+  Future<void> _loadPeriodData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedDate = prefs.getString('lastPeriodDate');
+    if (savedDate != null) {
+      setState(() {
+        lastPeriodDate = DateTime.parse(savedDate);
+        nextPeriodDate = lastPeriodDate!.add(Duration(days: 28));
+      });
+    }
+  }
+
+  Future<void> _savePeriodDate(DateTime date) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastPeriodDate', date.toIso8601String());
+    setState(() {
+      lastPeriodDate = date;
+      nextPeriodDate = lastPeriodDate!.add(Duration(days: 28));
+    });
+  }
+
+  void _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null && pickedDate != lastPeriodDate) {
+      _savePeriodDate(pickedDate);
+    }
+  }
+
+  void _updateRecommendations(String mood) {
+    setState(() {
+      selectedMood = mood;
+      switch (mood) {
+        case 'Happy':
+          songRecommendation = 'Upbeat K-pop songs 🎶';
+          foodRecommendation = 'Fruit smoothie 🍓🥤';
+          break;
+        case 'Sad':
+          songRecommendation = 'Soft ballads 🎵';
+          foodRecommendation = 'Dark chocolate 🍫';
+          break;
+        case 'Tired':
+          songRecommendation = 'Relaxing lo-fi music 🎼';
+          foodRecommendation = 'Green tea 🍵';
+          break;
+        case 'Cramps':
+          songRecommendation = 'Calm instrumental tunes 🎹';
+          foodRecommendation = 'Warm soup 🍜';
+          break;
+        default:
+          songRecommendation = '';
+          foodRecommendation = '';
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Image.asset('assets/logo.png', height: 40), // Logo in AppBar
+            SizedBox(width: 10),
+            Text('Period Tracker'), // App title
+          ],
+        ),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(child: Image.asset('assets/logo.png', height: 100)), // Logo in Center
+          SizedBox(height: 20),
+          Text('Welcome to Your Period Tracker!', style: TextStyle(fontSize: 20)),
+          SizedBox(height: 20),
+          Text(
+            'Last Period Date: ${lastPeriodDate != null ? lastPeriodDate!.toLocal().toString().split(' ')[0] : 'Not Set'}',
+            style: TextStyle(fontSize: 18),
+          ),
+          Text(
+            'Next Predicted Period: ${nextPeriodDate != null ? nextPeriodDate!.toLocal().toString().split(' ')[0] : 'Not Available'}',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () => _selectDate(context),
+            child: Text('Set Last Period Date'),
+          ),
+          SizedBox(height: 20),
+          Text('Select Your Mood:', style: TextStyle(fontSize: 18)),
+          DropdownButton<String>(
+            value: selectedMood,
+            items: ['Happy', 'Sad', 'Tired', 'Cramps']
+                .map((mood) => DropdownMenuItem(value: mood, child: Text(mood)))
+                .toList(),
+            onChanged: (value) => _updateRecommendations(value!),
+          ),
+          SizedBox(height: 20),
+          Text('🎵 Song Recommendation:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(songRecommendation, style: TextStyle(fontSize: 16)),
+          SizedBox(height: 10),
+          Text('🍽 Food Recommendation:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(foodRecommendation, style: TextStyle(fontSize: 16)),
+        ],
+      ),
+    );
+  }
+}
