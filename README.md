@@ -1,4 +1,4 @@
-# periods tracker
+# Periods tracker
 # Basic details
 ## Team name: Techtronics
 ## Team members
