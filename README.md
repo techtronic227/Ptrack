@@ -15,5 +15,16 @@ https://github.com/user-attachments/assets/3b67ae54-a2f1-45bf-a4d9-ce10e81e2f64
 # The Problem statement
 - Many individuals lack an effective tool to track and manage their menstrual cycles.
 # Solution
-The solution for this is to develop a period tracker app.
-#Technical Details 
+The solution for this is to develop a period tracker app that monitors the user's.
+# Technical Details
+## Technoligies Used
+- Programming Language: Python
+- Framework used-Python IDLE and Android Studio
+# Implementation 
+For Software:Flutter project
+# Installation
+- Python 3.x version needed
+# Team Contributions
+- Anamika S S- Logo designing 
+- Krishna A S- Logo designing 
+- Mridula A Chandran- Coding
